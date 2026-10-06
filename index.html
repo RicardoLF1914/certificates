@@ -4,21 +4,66 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Certificados | Ricardo</title>
-  <meta name="description" content="Meus certificados de cursos e diplomas." />
+  <meta name="description" content="Meus certificados de cursos, formações e diplomas." />
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body>
-  <header class="hero">
-    <h1>Certificados</h1>
-    <p>Minha trajetória de aprendizado em cursos, formações e diplomas.</p>
+  <a class="skip-link" href="#certificates">Pular para os certificados</a>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top">Ricardo</a>
+      <nav class="nav" aria-label="Navegação principal">
+        <a href="#certificates">Certificados</a>
+        <a href="https://github.com/RicardoLF1914" target="_blank" rel="noopener noreferrer">GitHub</a>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <section id="certificates" class="grid" aria-label="Lista de certificados"></section>
+  <main id="top">
+    <section class="hero">
+      <div class="container">
+        <p class="hero-eyebrow">Portfólio de formação</p>
+        <h1>Certificados e <span class="highlight">conquistas</span></h1>
+        <p class="hero-text">
+          Minha trajetória de aprendizado em cursos, formações e diplomas,
+          reunida em um só lugar.
+        </p>
+
+        <ul class="stats" aria-label="Resumo">
+          <li>
+            <strong data-stat="total">0</strong>
+            <span>Certificados</span>
+          </li>
+          <li>
+            <strong data-stat="hours">0</strong>
+            <span>Horas de estudo</span>
+          </li>
+          <li>
+            <strong data-stat="issuers">0</strong>
+            <span>Instituições</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="certificates-section">
+      <div class="container">
+        <div class="section-heading">
+          <h2>Meus certificados</h2>
+          <p>Clique em um certificado para ver os detalhes.</p>
+        </div>
+
+        <div id="certificates" class="grid" aria-live="polite"></div>
+      </div>
+    </section>
   </main>
 
-  <footer>
-    <p>&copy; 2026 Ricardo. Todos os direitos reservados.</p>
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p>&copy; 2026 Ricardo. Todos os direitos reservados.</p>
+      <a href="https://github.com/RicardoLF1914" target="_blank" rel="noopener noreferrer">GitHub</a>
+    </div>
   </footer>
 
   <script src="js/main.js"></script>
