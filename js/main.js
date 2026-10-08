@@ -3,6 +3,10 @@ const DATA_URL = "data/certificates.json";
 const TYPE_ORDER = ["Graduação", "Formação", "Curso"];
 const TYPE_LABELS = { Graduação: "Graduação", Formação: "Formações", Curso: "Cursos" };
 
+const PDFJS_WORKER_URL =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
+const THUMB_WIDTH = 640;
+
 const grid = document.getElementById("certificates");
 const typeFilters = document.getElementById("type-filters");
 const searchInput = document.getElementById("search");
@@ -10,6 +14,10 @@ const categorySelect = document.getElementById("category-select");
 const resultsCount = document.getElementById("results-count");
 
 const state = { certificates: [], type: "all", category: "", query: "" };
+
+if (window.pdfjsLib) {
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER_URL;
+}
 
 /* ---------- Utilidades ---------- */
 
@@ -43,21 +51,91 @@ function sortCertificates(list) {
   );
 }
 
+/* ---------- Miniaturas (PDF.js) ---------- */
+
+const thumbCache = new Map();
+
+async function renderPdfThumb(file) {
+  if (thumbCache.has(file)) return thumbCache.get(file);
+
+  const pdf = await window.pdfjsLib.getDocument(file).promise;
+
+  try {
+    const page = await pdf.getPage(1);
+    const baseViewport = page.getViewport({ scale: 1 });
+    const viewport = page.getViewport({ scale: THUMB_WIDTH / baseViewport.width });
+
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+
+    const context = canvas.getContext("2d");
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    await page.render({ canvasContext: context, viewport }).promise;
+
+    const src = canvas.toDataURL("image/jpeg", 0.85);
+    thumbCache.set(file, src);
+    return src;
+  } finally {
+    pdf.destroy();
+  }
+}
+
+function showThumbImage(thumb, src, title) {
+  const img = document.createElement("img");
+  img.src = src;
+  img.alt = `Prévia do certificado ${title}`;
+  thumb.replaceChildren(img);
+}
+
+async function loadPdfThumb(thumb) {
+  const { file, title } = thumb.dataset;
+
+  try {
+    const src = await renderPdfThumb(file);
+    showThumbImage(thumb, src, title);
+  } catch (error) {
+    console.warn(`Could not render thumbnail for ${file}:`, error);
+  }
+}
+
+const thumbObserver =
+  "IntersectionObserver" in window
+    ? new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            thumbObserver.unobserve(entry.target);
+            loadPdfThumb(entry.target);
+          });
+        },
+        { rootMargin: "200px" }
+      )
+    : null;
+
 /* ---------- Cards ---------- */
 
 function createThumb(cert) {
   const thumb = createElement("div", "card-thumb");
 
+  const initial = createElement("span", "card-initial", cert.issuer.charAt(0));
+  initial.setAttribute("aria-hidden", "true");
+  thumb.append(initial);
+
+  const cached = thumbCache.get(cert.file);
+
   if (cert.thumbnail) {
-    const img = document.createElement("img");
-    img.src = cert.thumbnail;
-    img.alt = `Prévia do certificado ${cert.title}`;
-    img.loading = "lazy";
-    thumb.append(img);
-  } else {
-    const initial = createElement("span", "card-initial", cert.issuer.charAt(0));
-    initial.setAttribute("aria-hidden", "true");
-    thumb.append(initial);
+    showThumbImage(thumb, cert.thumbnail, cert.title);
+  } else if (cached) {
+    showThumbImage(thumb, cached, cert.title);
+  } else if (window.pdfjsLib && cert.file.toLowerCase().endsWith(".pdf")) {
+    thumb.dataset.file = cert.file;
+    thumb.dataset.title = cert.title;
+
+    if (thumbObserver) thumbObserver.observe(thumb);
+    else loadPdfThumb(thumb);
   }
 
   return thumb;
@@ -116,8 +194,11 @@ function renderTypeFilters() {
   }, {});
 
   const options = [{ value: "all", label: "Todos", count: state.certificates.length }];
-  TYPE_ORDER.filter((type) => counts[type]).forEach((type) =>
-    options.push({ value: type, label: TYPE_LABELS[type], count: counts[type] })
+  const types = [...new Set([...TYPE_ORDER, ...Object.keys(counts)])].filter(
+    (type) => counts[type]
+  );
+  types.forEach((type) =>
+    options.push({ value: type, label: TYPE_LABELS[type] || type, count: counts[type] })
   );
 
   typeFilters.replaceChildren(
@@ -164,6 +245,8 @@ function getFiltered() {
 
 function render() {
   const filtered = getFiltered();
+
+  if (thumbObserver) thumbObserver.disconnect();
 
   if (filtered.length === 0) {
     grid.replaceChildren(
