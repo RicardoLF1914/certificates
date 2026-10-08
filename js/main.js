@@ -1,5 +1,27 @@
 const DATA_URL = "data/certificates.json";
+
+const TYPE_ORDER = ["Graduação", "Formação", "Curso"];
+const TYPE_LABELS = { Graduação: "Graduação", Formação: "Formações", Curso: "Cursos" };
+
 const grid = document.getElementById("certificates");
+const typeFilters = document.getElementById("type-filters");
+const searchInput = document.getElementById("search");
+const categorySelect = document.getElementById("category-select");
+const resultsCount = document.getElementById("results-count");
+
+const state = { certificates: [], type: "all", category: "", query: "" };
+
+/* ---------- Utilidades ---------- */
+
+const normalize = (text) =>
+  text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+function createElement(tag, className, text) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (text) element.textContent = text;
+  return element;
+}
 
 function formatDate(value) {
   const [year, month] = value.split("-").map(Number);
@@ -10,12 +32,18 @@ function formatDate(value) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-function createElement(tag, className, text) {
-  const element = document.createElement(tag);
-  if (className) element.className = className;
-  if (text) element.textContent = text;
-  return element;
+function typeRank(type) {
+  const index = TYPE_ORDER.indexOf(type);
+  return index === -1 ? TYPE_ORDER.length : index;
 }
+
+function sortCertificates(list) {
+  return [...list].sort(
+    (a, b) => typeRank(a.type) - typeRank(b.type) || b.date.localeCompare(a.date)
+  );
+}
+
+/* ---------- Cards ---------- */
 
 function createThumb(cert) {
   const thumb = createElement("div", "card-thumb");
@@ -44,24 +72,18 @@ function createActions(cert) {
   view.rel = "noopener noreferrer";
   view.setAttribute("aria-label", `Visualizar certificado: ${cert.title}`);
 
-  const download = createElement("a", "btn btn-outline", "Baixar");
-  download.href = cert.file;
-  download.download = "";
-  download.setAttribute("aria-label", `Baixar certificado: ${cert.title}`);
-
-  actions.append(view, download);
+  actions.append(view);
   return actions;
 }
 
 function createCard(cert) {
   const card = createElement("article", "card");
-  card.dataset.category = cert.category;
 
-  const body = createElement("div", "card-body");
   const meta = createElement("ul", "card-meta");
   meta.append(createElement("li", "", formatDate(cert.date)));
   if (cert.hours) meta.append(createElement("li", "", `${cert.hours} horas`));
 
+  const body = createElement("div", "card-body");
   body.append(
     createElement("span", "badge", cert.category),
     createElement("h3", "card-title", cert.title),
@@ -74,9 +96,7 @@ function createCard(cert) {
   return card;
 }
 
-function renderCards(certificates) {
-  grid.replaceChildren(...certificates.map(createCard));
-}
+/* ---------- Estatísticas ---------- */
 
 function renderStats(certificates) {
   const totalHours = certificates.reduce((sum, c) => sum + (Number(c.hours) || 0), 0);
@@ -87,16 +107,110 @@ function renderStats(certificates) {
   document.querySelector('[data-stat="issuers"]').textContent = issuers.size;
 }
 
+/* ---------- Filtros ---------- */
+
+function renderTypeFilters() {
+  const counts = state.certificates.reduce((acc, c) => {
+    acc[c.type] = (acc[c.type] || 0) + 1;
+    return acc;
+  }, {});
+
+  const options = [{ value: "all", label: "Todos", count: state.certificates.length }];
+  TYPE_ORDER.filter((type) => counts[type]).forEach((type) =>
+    options.push({ value: type, label: TYPE_LABELS[type], count: counts[type] })
+  );
+
+  typeFilters.replaceChildren(
+    ...options.map(({ value, label, count }) => {
+      const button = createElement("button", "chip", `${label} (${count})`);
+      button.type = "button";
+      button.dataset.type = value;
+      button.setAttribute("aria-pressed", String(value === state.type));
+      return button;
+    })
+  );
+}
+
+function updateChips() {
+  typeFilters.querySelectorAll("button").forEach((button) => {
+    button.setAttribute("aria-pressed", String(button.dataset.type === state.type));
+  });
+}
+
+function renderCategoryOptions() {
+  const categories = [...new Set(state.certificates.map((c) => c.category))].sort((a, b) =>
+    a.localeCompare(b, "pt-BR")
+  );
+
+  categories.forEach((category) => {
+    const option = createElement("option", "", category);
+    option.value = category;
+    categorySelect.append(option);
+  });
+}
+
+function getFiltered() {
+  const query = normalize(state.query);
+
+  return state.certificates.filter((c) => {
+    const matchesType = state.type === "all" || c.type === state.type;
+    const matchesCategory = !state.category || c.category === state.category;
+    const matchesQuery =
+      !query || normalize(`${c.title} ${c.issuer} ${c.category}`).includes(query);
+
+    return matchesType && matchesCategory && matchesQuery;
+  });
+}
+
+function render() {
+  const filtered = getFiltered();
+
+  if (filtered.length === 0) {
+    grid.replaceChildren(
+      createElement("p", "empty", "Nenhum certificado encontrado com esses filtros.")
+    );
+  } else {
+    grid.replaceChildren(...filtered.map(createCard));
+  }
+
+  resultsCount.textContent = `Mostrando ${filtered.length} de ${state.certificates.length} certificados`;
+}
+
+/* ---------- Eventos ---------- */
+
+typeFilters.addEventListener("click", (event) => {
+  const button = event.target.closest("button[data-type]");
+  if (!button) return;
+
+  state.type = button.dataset.type;
+  updateChips();
+  render();
+});
+
+searchInput.addEventListener("input", () => {
+  state.query = searchInput.value;
+  render();
+});
+
+categorySelect.addEventListener("change", () => {
+  state.category = categorySelect.value;
+  render();
+});
+
+/* ---------- Inicialização ---------- */
+
 async function init() {
   try {
     const response = await fetch(DATA_URL);
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    const certificates = await response.json();
-    certificates.sort((a, b) => b.date.localeCompare(a.date));
+    const data = await response.json();
+    state.certificates = sortCertificates(data.map((c) => ({ type: "Curso", ...c })));
 
-    renderStats(certificates);
-    renderCards(certificates);
+    renderStats(state.certificates);
+    renderTypeFilters();
+    renderCategoryOptions();
+    render();
   } catch (error) {
     console.error("Failed to load certificates:", error);
     grid.replaceChildren(
