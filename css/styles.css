@@ -356,15 +356,18 @@ a:hover {
 .card-thumb {
   display: grid;
   place-items: center;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   background: linear-gradient(135deg, var(--green-900), var(--green-600));
+  border-bottom: 1px solid var(--border);
 }
 
 .card-thumb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: top center;
+  background: #ffffff;
 }
 
 .card-initial {
