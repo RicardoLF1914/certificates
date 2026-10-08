@@ -2,6 +2,7 @@
   {
     "id": "digital-college-ia-generativa",
     "title": "Formação Desenvolvedor de IA Generativa",
+    "type": "Formação",
     "issuer": "Digital College",
     "category": "Inteligência Artificial",
     "date": "2026-08",
@@ -11,6 +12,7 @@
   {
     "id": "curso-em-video-javascript",
     "title": "JavaScript",
+    "type": "Curso",
     "issuer": "Curso em Vídeo",
     "category": "Programação",
     "date": "2026-03",
@@ -20,6 +22,7 @@
   {
     "id": "alura-html-css-responsividade",
     "title": "HTML e CSS: Trabalhando com Responsividade e Publicação de Projetos",
+    "type": "Curso",
     "issuer": "Alura",
     "category": "Front-end",
     "date": "2025-12",
@@ -29,6 +32,7 @@
   {
     "id": "unifor-ciencia-da-computacao",
     "title": "Bacharelado em Ciência da Computação",
+    "type": "Graduação",
     "issuer": "Universidade de Fortaleza",
     "category": "Graduação",
     "date": "2025-12",
@@ -37,6 +41,7 @@
   {
     "id": "hackatruck-cloud-services-swift",
     "title": "Práticas de Cloud Services usando Swift com ênfase em Serviços Cognitivos",
+    "type": "Formação",
     "issuer": "Hackatruck",
     "category": "Mobile e Cloud",
     "date": "2025-11",
@@ -46,6 +51,7 @@
   {
     "id": "alura-html-css-cabecalho-footer",
     "title": "HTML e CSS: Cabeçalho, Footer e Variáveis CSS",
+    "type": "Curso",
     "issuer": "Alura",
     "category": "Front-end",
     "date": "2025-09",
@@ -55,6 +61,7 @@
   {
     "id": "alura-html-css-classes-flexbox",
     "title": "HTML e CSS: Classes, Posicionamento e Flexbox",
+    "type": "Curso",
     "issuer": "Alura",
     "category": "Front-end",
     "date": "2025-09",
@@ -64,6 +71,7 @@
   {
     "id": "alura-trafego-pago",
     "title": "Tráfego Pago: Estratégias e Aplicações",
+    "type": "Curso",
     "issuer": "Alura",
     "category": "Marketing",
     "date": "2025-07",
@@ -73,6 +81,7 @@
   {
     "id": "alura-python-data-science",
     "title": "Python para Data Science: Primeiros Passos",
+    "type": "Curso",
     "issuer": "Alura",
     "category": "Dados",
     "date": "2025-07",
@@ -82,6 +91,7 @@
   {
     "id": "alura-data-science-visualizacao",
     "title": "Data Science: Análise e Visualização de Dados",
+    "type": "Curso",
     "issuer": "Alura",
     "category": "Dados",
     "date": "2025-03",
@@ -91,6 +101,7 @@
   {
     "id": "alura-git-github",
     "title": "Git e GitHub: Compartilhando e Colaborando em Projetos",
+    "type": "Curso",
     "issuer": "Alura",
     "category": "Programação",
     "date": "2025-02",
@@ -100,6 +111,7 @@
   {
     "id": "alura-html-css-ambientes-tags",
     "title": "HTML e CSS: Ambientes de Desenvolvimento, Estrutura de Arquivos e Tags",
+    "type": "Curso",
     "issuer": "Alura",
     "category": "Front-end",
     "date": "2025-02",
@@ -109,6 +121,7 @@
   {
     "id": "curso-em-video-python-mundo-2",
     "title": "Python 3: Mundo 2",
+    "type": "Curso",
     "issuer": "Curso em Vídeo",
     "category": "Programação",
     "date": "2024-02",
@@ -118,6 +131,7 @@
   {
     "id": "curso-em-video-python-mundo-1",
     "title": "Python 3: Mundo 1",
+    "type": "Curso",
     "issuer": "Curso em Vídeo",
     "category": "Programação",
     "date": "2023-03",
