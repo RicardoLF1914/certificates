@@ -6,12 +6,20 @@ const TYPE_LABELS = { Graduação: "Graduação", Formação: "Formações", Cur
 const PDFJS_WORKER_URL =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
 const THUMB_WIDTH = 640;
+const VIEWER_MAX_WIDTH = 900;
 
 const grid = document.getElementById("certificates");
 const typeFilters = document.getElementById("type-filters");
 const searchInput = document.getElementById("search");
 const categorySelect = document.getElementById("category-select");
 const resultsCount = document.getElementById("results-count");
+
+const viewer = document.getElementById("viewer");
+const viewerTitle = document.getElementById("viewer-title");
+const viewerSubtitle = document.getElementById("viewer-subtitle");
+const viewerOpen = document.getElementById("viewer-open");
+const viewerClose = document.getElementById("viewer-close");
+const viewerBody = document.getElementById("viewer-body");
 
 const state = { certificates: [], type: "all", category: "", query: "" };
 
@@ -23,6 +31,8 @@ if (window.pdfjsLib) {
 
 const normalize = (text) =>
   text.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+const isPdf = (file) => file.toLowerCase().endsWith(".pdf");
 
 function createElement(tag, className, text) {
   const element = document.createElement(tag);
@@ -115,6 +125,87 @@ const thumbObserver =
       )
     : null;
 
+/* ---------- Visualizador (modal) ---------- */
+
+let viewerToken = 0;
+
+async function renderPdfPages(file, container, status, token) {
+  const pdf = await window.pdfjsLib.getDocument(file).promise;
+
+  try {
+    const cssWidth = Math.min(container.clientWidth, VIEWER_MAX_WIDTH);
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+
+    for (let number = 1; number <= pdf.numPages; number += 1) {
+      if (token !== viewerToken) return;
+
+      const page = await pdf.getPage(number);
+      const baseViewport = page.getViewport({ scale: 1 });
+      const viewport = page.getViewport({ scale: (cssWidth * ratio) / baseViewport.width });
+
+      const canvas = document.createElement("canvas");
+      canvas.className = "viewer-page";
+      canvas.width = Math.floor(viewport.width);
+      canvas.height = Math.floor(viewport.height);
+      canvas.setAttribute("role", "img");
+      canvas.setAttribute("aria-label", `Página ${number} de ${pdf.numPages}`);
+
+      const context = canvas.getContext("2d");
+      context.fillStyle = "#ffffff";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+
+      await page.render({ canvasContext: context, viewport }).promise;
+
+      if (token !== viewerToken) return;
+      status.remove();
+      container.append(canvas);
+    }
+  } finally {
+    pdf.destroy();
+  }
+}
+
+function openViewer(cert) {
+  viewerToken += 1;
+  const token = viewerToken;
+
+  viewerTitle.textContent = cert.title;
+  viewerSubtitle.textContent = `${cert.issuer} · ${formatDate(cert.date)}`;
+  viewerOpen.href = cert.file;
+
+  if (!viewer.open) viewer.showModal();
+  viewerBody.scrollTop = 0;
+
+  if (!isPdf(cert.file)) {
+    const img = createElement("img", "viewer-image");
+    img.src = cert.file;
+    img.alt = `Certificado: ${cert.title}`;
+    viewerBody.replaceChildren(img);
+    return;
+  }
+
+  const status = createElement("p", "viewer-status", "Carregando certificado…");
+  viewerBody.replaceChildren(status);
+
+  renderPdfPages(cert.file, viewerBody, status, token).catch((error) => {
+    console.error(`Could not render ${cert.file}:`, error);
+    if (token === viewerToken) {
+      status.textContent = "Não foi possível exibir o certificado aqui. Use “Abrir em nova aba”.";
+    }
+  });
+}
+
+viewerClose.addEventListener("click", () => viewer.close());
+
+viewer.addEventListener("click", (event) => {
+  if (event.target === viewer) viewer.close();
+});
+
+viewer.addEventListener("close", () => {
+  viewerToken += 1;
+  viewerBody.replaceChildren();
+});
+
 /* ---------- Cards ---------- */
 
 function createThumb(cert) {
@@ -128,9 +219,11 @@ function createThumb(cert) {
 
   if (cert.thumbnail) {
     showThumbImage(thumb, cert.thumbnail, cert.title);
+  } else if (!isPdf(cert.file)) {
+    showThumbImage(thumb, cert.file, cert.title);
   } else if (cached) {
     showThumbImage(thumb, cached, cert.title);
-  } else if (window.pdfjsLib && cert.file.toLowerCase().endsWith(".pdf")) {
+  } else if (window.pdfjsLib) {
     thumb.dataset.file = cert.file;
     thumb.dataset.title = cert.title;
 
@@ -149,6 +242,14 @@ function createActions(cert) {
   view.target = "_blank";
   view.rel = "noopener noreferrer";
   view.setAttribute("aria-label", `Visualizar certificado: ${cert.title}`);
+
+  view.addEventListener("click", (event) => {
+    const modified = event.ctrlKey || event.metaKey || event.shiftKey || event.button !== 0;
+    if (modified || (isPdf(cert.file) && !window.pdfjsLib)) return;
+
+    event.preventDefault();
+    openViewer(cert);
+  });
 
   actions.append(view);
   return actions;
