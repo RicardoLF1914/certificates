@@ -1,0 +1,127 @@
+[
+  {
+    "id": "digital-college-ia-generativa",
+    "title": "Formação Desenvolvedor de IA Generativa",
+    "issuer": "Digital College",
+    "category": "Inteligência Artificial",
+    "date": "2026-08",
+    "hours": 96,
+    "file": "assets/certificates/2026-digital-college-ia-generativa.pdf"
+  },
+  {
+    "id": "curso-em-video-javascript",
+    "title": "JavaScript",
+    "issuer": "Curso em Vídeo",
+    "category": "Programação",
+    "date": "2026-03",
+    "hours": 40,
+    "file": "assets/certificates/2026-curso-em-video-javascript.pdf"
+  },
+  {
+    "id": "alura-html-css-responsividade",
+    "title": "HTML e CSS: Trabalhando com Responsividade e Publicação de Projetos",
+    "issuer": "Alura",
+    "category": "Front-end",
+    "date": "2025-12",
+    "hours": 6,
+    "file": "assets/certificates/2025-alura-html-css-responsividade-publicacao.pdf"
+  },
+  {
+    "id": "unifor-ciencia-da-computacao",
+    "title": "Bacharelado em Ciência da Computação",
+    "issuer": "Universidade de Fortaleza",
+    "category": "Graduação",
+    "date": "2025-12",
+    "file": "assets/certificates/2025-unifor-ciencia-da-computacao.pdf"
+  },
+  {
+    "id": "hackatruck-cloud-services-swift",
+    "title": "Práticas de Cloud Services usando Swift com ênfase em Serviços Cognitivos",
+    "issuer": "Hackatruck",
+    "category": "Mobile e Cloud",
+    "date": "2025-11",
+    "hours": 100,
+    "file": "assets/certificates/2025-hackatruck-cloud-services-swift.pdf"
+  },
+  {
+    "id": "alura-html-css-cabecalho-footer",
+    "title": "HTML e CSS: Cabeçalho, Footer e Variáveis CSS",
+    "issuer": "Alura",
+    "category": "Front-end",
+    "date": "2025-09",
+    "hours": 6,
+    "file": "assets/certificates/2025-alura-html-css-cabecalho-footer-variaveis.pdf"
+  },
+  {
+    "id": "alura-html-css-classes-flexbox",
+    "title": "HTML e CSS: Classes, Posicionamento e Flexbox",
+    "issuer": "Alura",
+    "category": "Front-end",
+    "date": "2025-09",
+    "hours": 8,
+    "file": "assets/certificates/2025-alura-html-css-classes-flexbox.pdf"
+  },
+  {
+    "id": "alura-trafego-pago",
+    "title": "Tráfego Pago: Estratégias e Aplicações",
+    "issuer": "Alura",
+    "category": "Marketing",
+    "date": "2025-07",
+    "hours": 8,
+    "file": "assets/certificates/2025-alura-trafego-pago.pdf"
+  },
+  {
+    "id": "alura-python-data-science",
+    "title": "Python para Data Science: Primeiros Passos",
+    "issuer": "Alura",
+    "category": "Dados",
+    "date": "2025-07",
+    "hours": 10,
+    "file": "assets/certificates/2025-alura-python-data-science.pdf"
+  },
+  {
+    "id": "alura-data-science-visualizacao",
+    "title": "Data Science: Análise e Visualização de Dados",
+    "issuer": "Alura",
+    "category": "Dados",
+    "date": "2025-03",
+    "hours": 6,
+    "file": "assets/certificates/2025-alura-data-science-analise-visualizacao.pdf"
+  },
+  {
+    "id": "alura-git-github",
+    "title": "Git e GitHub: Compartilhando e Colaborando em Projetos",
+    "issuer": "Alura",
+    "category": "Programação",
+    "date": "2025-02",
+    "hours": 8,
+    "file": "assets/certificates/2025-alura-git-github.pdf"
+  },
+  {
+    "id": "alura-html-css-ambientes-tags",
+    "title": "HTML e CSS: Ambientes de Desenvolvimento, Estrutura de Arquivos e Tags",
+    "issuer": "Alura",
+    "category": "Front-end",
+    "date": "2025-02",
+    "hours": 8,
+    "file": "assets/certificates/2025-alura-html-css-ambientes-tags.pdf"
+  },
+  {
+    "id": "curso-em-video-python-mundo-2",
+    "title": "Python 3: Mundo 2",
+    "issuer": "Curso em Vídeo",
+    "category": "Programação",
+    "date": "2024-02",
+    "hours": 40,
+    "file": "assets/certificates/2024-curso-em-video-python-mundo-2.pdf"
+  },
+  {
+    "id": "curso-em-video-python-mundo-1",
+    "title": "Python 3: Mundo 1",
+    "issuer": "Curso em Vídeo",
+    "category": "Programação",
+    "date": "2023-03",
+    "hours": 40,
+    "file": "assets/certificates/2023-curso-em-video-python-mundo-1.pdf"
+  }
+]
