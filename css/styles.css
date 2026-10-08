@@ -15,20 +15,36 @@
   --green-900: #14532d;
 
   /* Tema claro */
-  --bg: #f7faf8;
+  --bg: #e9f0ec;
   --surface: #ffffff;
-  --surface-muted: #eef4f0;
+  --surface-muted: #dce7e0;
   --text: #14211a;
-  --text-muted: #5b6b62;
-  --border: #dbe5df;
+  --text-muted: #55655c;
+  --border: #c7d7ce;
   --primary: var(--green-600);
   --primary-strong: var(--green-700);
   --on-primary: #ffffff;
-  --shadow: 0 1px 2px rgb(20 33 26 / 6%), 0 8px 24px rgb(20 33 26 / 6%);
+  --shadow: 0 1px 2px rgb(20 33 26 / 8%), 0 10px 28px rgb(20 33 26 / 12%);
 
   --radius: 14px;
   --container: 1120px;
   --header-h: 64px;
+
+  /* Hero: por padrão acompanha as cores do tema (veja o override do tema claro abaixo) */
+  --hero-bg:
+    radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--green-500) 18%, transparent), transparent 55%),
+    radial-gradient(circle at 90% 20%, color-mix(in srgb, var(--green-600) 12%, transparent), transparent 50%);
+  --hero-border: var(--border);
+  --hero-eyebrow: var(--primary-strong);
+  --hero-title: var(--text);
+  --hero-accent-from: var(--green-600);
+  --hero-accent-to: var(--green-500);
+  --hero-text: var(--text-muted);
+  --hero-card-bg: var(--surface);
+  --hero-card-border: var(--border);
+  --hero-card-shadow: var(--shadow);
+  --hero-stat: var(--primary-strong);
+  --hero-stat-label: var(--text-muted);
 }
 
 /* Tema escuro automático (fallback quando o JS não define data-theme) */
@@ -63,6 +79,27 @@
   --primary-strong: #4ade80;
   --on-primary: #06210f;
   --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 8px 24px rgb(0 0 0 / 35%);
+}
+
+/* ==========================================================================
+   Hero escuro no tema claro (dá destaque ao topo da página)
+   ========================================================================== */
+:root[data-theme="light"] {
+  --hero-bg:
+    radial-gradient(circle at 15% 0%, rgb(34 197 94 / 28%), transparent 55%),
+    radial-gradient(circle at 90% 20%, rgb(22 163 74 / 22%), transparent 50%),
+    linear-gradient(135deg, #0b2a1a 0%, #14532d 100%);
+  --hero-border: transparent;
+  --hero-eyebrow: #86efac;
+  --hero-title: #f0fdf4;
+  --hero-accent-from: #4ade80;
+  --hero-accent-to: #bbf7d0;
+  --hero-text: rgb(240 253 244 / 80%);
+  --hero-card-bg: rgb(255 255 255 / 8%);
+  --hero-card-border: rgb(255 255 255 / 18%);
+  --hero-card-shadow: none;
+  --hero-stat: #86efac;
+  --hero-stat-label: rgb(240 253 244 / 75%);
 }
 
 /* ==========================================================================
@@ -254,10 +291,8 @@ a:hover {
    ========================================================================== */
 .hero {
   padding: 72px 0 56px;
-  background:
-    radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--green-500) 18%, transparent), transparent 55%),
-    radial-gradient(circle at 90% 20%, color-mix(in srgb, var(--green-600) 12%, transparent), transparent 50%);
-  border-bottom: 1px solid var(--border);
+  background: var(--hero-bg);
+  border-bottom: 1px solid var(--hero-border);
 }
 
 .hero-eyebrow {
@@ -266,7 +301,7 @@ a:hover {
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  color: var(--primary-strong);
+  color: var(--hero-eyebrow);
 }
 
 .hero h1 {
@@ -274,10 +309,11 @@ a:hover {
   font-size: clamp(2.2rem, 6vw, 3.8rem);
   line-height: 1.1;
   letter-spacing: -0.03em;
+  color: var(--hero-title);
 }
 
 .highlight {
-  background: linear-gradient(90deg, var(--green-600), var(--green-500));
+  background: linear-gradient(90deg, var(--hero-accent-from), var(--hero-accent-to));
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -287,7 +323,7 @@ a:hover {
   max-width: 56ch;
   margin: 0 0 36px;
   font-size: 1.15rem;
-  color: var(--text-muted);
+  color: var(--hero-text);
 }
 
 /* Estatísticas */
@@ -303,10 +339,11 @@ a:hover {
 
 .stats li {
   padding: 18px 20px;
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: var(--hero-card-bg);
+  border: 1px solid var(--hero-card-border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  box-shadow: var(--hero-card-shadow);
+  backdrop-filter: blur(6px);
 }
 
 .stats strong {
@@ -314,12 +351,12 @@ a:hover {
   font-size: 1.9rem;
   line-height: 1.1;
   letter-spacing: -0.02em;
-  color: var(--primary-strong);
+  color: var(--hero-stat);
 }
 
 .stats span {
   font-size: 0.85rem;
-  color: var(--text-muted);
+  color: var(--hero-stat-label);
 }
 
 /* ==========================================================================
